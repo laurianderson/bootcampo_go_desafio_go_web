@@ -5,17 +5,20 @@ import (
 	"github.com/laurianderson/bootcamp_go_desafio_go_web/internal/domain"
 )
 
+//interface
 type Service interface {
 	GetAll(ctx context.Context) ([]domain.Ticket, error)
 	GetTicketByDestination(ctx context.Context ,destination string) ([]domain.Ticket, error)
-	GetTotalTickets(ctx context.Context, destination string) ([]domain.Ticket, error)
+	GetTotalTickets(ctx context.Context, destination string) (int, error)
 	AverageDestination(ctx context.Context, destination string) (float64, error)
 }
 
+//struct
 type service struct {
     rp Repository
 }
 
+//builder
 func NewService(rp Repository) Service {
     return &service{
         rp: rp,
@@ -33,7 +36,7 @@ func (s *service) GetTicketByDestination(ctx context.Context, destination string
 }
 
 //Get total tickets by destination
-func (s *service) GetTotalTickets(ctx context.Context, destination string) ([]domain.Ticket, error) {
+func (s *service) GetTotalTickets(ctx context.Context, destination string) (int, error) {
     return s.rp.GetTotalTickets(ctx, destination)
 }
 

@@ -33,7 +33,7 @@ func (ct *ControllerTicket) GetTicketsByCountry() gin.HandlerFunc {
 
 		destination := ctx.Param("dest")
 
-		tickets, err := ct.service.GetTotalTickets(ctx, destination)
+		tickets, err := ct.service.GetTicketByDestination(ctx, destination)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, err.Error(), nil)
 			return
@@ -41,6 +41,22 @@ func (ct *ControllerTicket) GetTicketsByCountry() gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, gin.H{"message": "success", "data": tickets})
 	}
+}
+
+//Get total tickets by country
+func (ct *ControllerTicket) GetTotalTicketsByCountry() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+
+        destination := ctx.Param("dest")
+
+        tickets, err := ct.service.GetTotalTickets(ctx, destination)
+        if err!= nil {
+            ctx.String(http.StatusInternalServerError, err.Error(), nil)
+            return
+        }
+
+        ctx.JSON(http.StatusOK, gin.H{"message": "success", "destination": destination, "data": tickets})
+    }
 }
 
 //Average destination
@@ -55,6 +71,6 @@ func (s *ControllerTicket) AverageDestination() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, gin.H{"message": "success", "data": avg})
+		ctx.JSON(http.StatusOK, gin.H{"message": "success", "destination":destination,  "average": avg})
 	}
 }

@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Ticket, error)
 	GetTicketByDestination(ctx context.Context, destination string) ([]domain.Ticket, error)
-	GetTotalTickets(ctx context.Context, destination string) ([]domain.Ticket, error)
+	GetTotalTickets(ctx context.Context, destination string) (int, error)
 	AverageDestination(ctx context.Context, destination string) (float64, error)
 }
 
@@ -55,41 +55,26 @@ func (r *repository) GetTicketByDestination(ctx context.Context, destination str
 }
 
 //Get total tickets by destination
-func (r *repository) GetTotalTickets(ctx context.Context, destination string) ([]domain.Ticket, error) {
+func (r *repository) GetTotalTickets(ctx context.Context, destination string) (int, error) {
 
-    var ticketsDest []domain.Ticket
+    var countTicketsByDestination int
 
-    if len(r.db) == 0 {
-        return []domain.Ticket{}, fmt.Errorf("empty list of tickets")
-    }
+	r.GetTicketByDestination(ctx, destination )
 
-    for _, t := range r.db {
+	for _, t := range r.db {
         if t.Country == destination {
-            ticketsDest = append(ticketsDest, t)
+            countTicketsByDestination++
         }
     }
 
-    return ticketsDest, nil
+    return countTicketsByDestination, nil
 }
 
 //Average destination
 func (r *repository) AverageDestination(ctx context.Context, destination string) (float64, error) {
-
-    var ticketsDest []domain.Ticket
-
-    if len(r.db) == 0 {
-        return 0, fmt.Errorf("empty list of tickets")
+	totalTicketsByDestination,_ := r.GetTotalTickets(ctx, destination) 
+	if totalTicketsByDestination == 0 {
+        return 0, fmt.Errorf("no tickets found for destination %s", destination)
     }
-
-    for _, t := range r.db {
-        if t.Country == destination {
-            ticketsDest = append(ticketsDest, t)
-        }
-    }
-
-    if len(ticketsDest) == 0 {
-        return 0, fmt.Errorf("empty list of tickets")
-    }
-
-    return float64(len(ticketsDest)) / float64(len(r.db)), nil
+	return  (float64(totalTicketsByDestination) / float64(len(r.db))), nil
 }

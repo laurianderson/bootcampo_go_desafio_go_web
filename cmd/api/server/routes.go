@@ -40,6 +40,7 @@ func (r *Router) SetupRoutes() {
 
 	tckGroup.GET("", ct.GetAll())
 	tckGroup.GET("/getByCountry/:dest", ct.GetTicketsByCountry())
+	tckGroup.GET("/getTotalByCountry/:dest", ct.GetTotalTicketsByCountry())
 	tckGroup.GET("/getAverage/:dest", ct.AverageDestination())
 
 }
