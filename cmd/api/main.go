@@ -3,25 +3,28 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
-	"github.com/bootcamp-go/desafio-go-web/cmd/server/router"
-	"github.com/bootcamp-go/desafio-go-web/internal/domain"
+
 	"github.com/gin-gonic/gin"
+	"github.com/laurianderson/bootcamp_go_desafio_go_web/cmd/api/server"
+	"github.com/laurianderson/bootcamp_go_desafio_go_web/internal/domain"
 )
 
 func main() {
 
-	// Cargo csv.
-	list, err := LoadTicketsFromFile("../../tickets.csv")
+	//Load tickets.csv
+	list, err := LoadTicketsFromFile("/Users/landerson/Documents/meli_bootcamp/go/bootcamp_go_desafio_go_web/tickets.csv")
 	if err != nil {
 		panic("Couldn't load tickets")
 	}
 
+	//Ping
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
+	r.GET("/ping", func(c *gin.Context) { c.String(http.StatusOK, "pong") })
 
-	router := router.NewRouter(r, list)
+	router := server.NewRouter(r, &list)
 	router.MapRoutes()
 
 	if err := r.Run(); err != nil {
@@ -30,6 +33,7 @@ func main() {
 
 }
 
+//Open tickets.csv file
 func LoadTicketsFromFile(path string) ([]domain.Ticket, error) {
 
 	var ticketList []domain.Ticket
