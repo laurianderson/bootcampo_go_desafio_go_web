@@ -3,7 +3,6 @@ package tickets
 import (
 	"context"
 	"fmt"
-
 	"github.com/bootcamp-go/desafio-go-web/internal/domain"
 )
 
